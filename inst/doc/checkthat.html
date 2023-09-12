@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>checkthat</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">checkthat</h1>
+
+
+
+<p>The <strong>checkthat</strong> philosophy is that you already perform
+good data checks and you should keep doing it. But those checks would be
+even better if they lived in the code, rather than in your head.
+Checkthat therefore provides functions that closely resemble the checks
+you already do by hand or by eye, so that it is easy for you to also
+express them in code as you go.</p>
+<div id="basic-usage" class="section level2">
+<h2>Basic usage</h2>
+<p>Checkthat’s main function is <code>check_that(.data, ...)</code>,
+which takes a dataframe as its first argument, followed by any number of
+assertions you want to check for that dataframe.</p>
+<p>When all checks pass, you get a brief message confirming that’s the
+case.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(checkthat)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>mtcars <span class="sc">|&gt;</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>  <span class="fu">check_that</span>(</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>    <span class="fu">all</span>(cyl <span class="sc">&gt;</span> <span class="dv">2</span>),</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>    <span class="sc">!</span><span class="fu">any</span>(<span class="fu">is.na</span>(mpg))</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>  )</span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="co">#&gt; ✔ all data checks passing</span></span></code></pre></div>
+<p>When at least one check fails, <code>check_that()</code> throws an
+error, halting the potentially risky execution of subsequent code. It
+then gives you get a detailed breakdown of what the outcome was for each
+test.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>mtcars <span class="sc">|&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>  <span class="fu">check_that</span>(</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>    <span class="fu">all</span>(cyl <span class="sc">&gt;</span> <span class="dv">2</span>),</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>    <span class="fu">any</span>(mpg <span class="sc">&gt;</span> <span class="dv">35</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>  )</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="co">#&gt; ── Data Checks ─────────────────────────────────────────────────────────────────</span></span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a><span class="co">#&gt; ✔ all(cyl &gt; 2) --&gt; TRUE</span></span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a><span class="co">#&gt; ✖ any(mpg &gt; 35) --&gt; FALSE</span></span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a><span class="co">#&gt; ────────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a><span class="co">#&gt; Error in `cli_throw_test_error()`:</span></span>
+<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a><span class="co">#&gt; ! At least one data check failed.</span></span></code></pre></div>
+<p>The <code>check_that()</code> function is designed to work with both
+base R’s existing logical functions (e.g., <code>all()</code>,
+<code>any()</code>), as well it’s own set of more special helper
+functions. Theses helper functions are designed to be both readable and
+to mirror in code what you already do manually by eye-balling a
+dataset.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>mtcars <span class="sc">|&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  <span class="fu">check_that</span>(</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>    <span class="fu">some_of</span>(cyl <span class="sc">&gt;</span> <span class="dv">4</span>, <span class="at">at_least =</span> .<span class="dv">30</span>, <span class="at">at_most =</span> <span class="dv">25</span>),</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>    <span class="fu">whenever</span>(wt <span class="sc">&lt;</span> <span class="dv">3</span>, <span class="at">then_expect =</span> mpg <span class="sc">&gt;</span> <span class="dv">19</span>),</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>    <span class="fu">for_case</span>(<span class="dv">2</span>, mpg <span class="sc">==</span> <span class="dv">21</span>, hp <span class="sc">==</span> <span class="dv">110</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>  )</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="co">#&gt; ✔ all data checks passing</span></span></code></pre></div>
+</div>
+<div id="tidyverse-pipelines" class="section level2">
+<h2>Tidyverse pipelines</h2>
+<p>The <code>check_that()</code> function always invisibly returns the
+same <code>.data</code> you gave it (always unmodified). This allows you
+to easily integrate it directly into your data manipulation
+pipelines.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>new_mtcars <span class="ot">&lt;-</span> mtcars <span class="sc">|&gt;</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>  <span class="fu">select</span>(mpg) <span class="sc">|&gt;</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">km_per_litre =</span> <span class="fl">0.425</span> <span class="sc">*</span> mpg) <span class="sc">|&gt;</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>  <span class="fu">check_that</span>(<span class="fu">max</span>(km_per_litre) <span class="sc">&lt;</span> <span class="dv">15</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co">#&gt; ✔ all data checks passing</span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="fu">head</span>(new_mtcars)</span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co">#&gt;                    mpg km_per_litre</span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co">#&gt; Mazda RX4         21.0       8.9250</span></span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="co">#&gt; Mazda RX4 Wag     21.0       8.9250</span></span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="co">#&gt; Datsun 710        22.8       9.6900</span></span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="co">#&gt; Hornet 4 Drive    21.4       9.0950</span></span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a><span class="co">#&gt; Hornet Sportabout 18.7       7.9475</span></span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a><span class="co">#&gt; Valiant           18.1       7.6925</span></span></code></pre></div>
+</div>
+<div id="checking-a-pipeline-at-multiple-points" class="section level2">
+<h2>Checking a pipeline at multiple points</h2>
+<p>Because it returns the same dataframe it received,
+<code>check_that()</code> can also be used at multiple points in a
+single pipeline. That way, you can check that multi-step processes are
+unfolding according to plan. This is be especially important for data
+tasks that are sensitive to the order of operations, or for checks on
+intermediate data that wont be available at the end.</p>
+<p>Consider a surprisingly tricky example. Imagine we wanted to (1)
+create a factor variable (<code>type</code>) designating cars as either
+small (<code>&quot;sm&quot;</code>) or large (<code>&quot;lg&quot;</code>) based on their
+weight (<code>wt</code>). Further imagine that we then (2) planned to
+filter in only the small cars and (3) calculate their mean
+<code>mpg</code> as our <code>desired_mpg</code>. This value might then
+be used to inform a personal purchase decision or perhaps to establish
+an industry benchmark for a manufacturer.</p>
+<p>The resulting data pipeline should be simple, but let’s use
+<code>check_that()</code> at multiple points to be safe.</p>
+<ol style="list-style-type: decimal">
+<li>We wont have access to the <code>wt</code> variable at the end of
+the pipeline. So, right after we use <code>wt</code> to compute
+<code>type</code>, we immediately check that all the weights in the
+<code>&quot;sm&quot;</code> group are less than those in the <code>&quot;lg&quot;</code>
+group, as intended.</li>
+<li>At the end, we check that our <code>desired_mpg</code> is within a
+plausible range.</li>
+</ol>
+<p>Here, the first check throws an error and stopS the pipeline. It also
+saves us from an inaccurate <code>desired_mpg</code> that the second
+check would not have caught.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>mtcars <span class="sc">|&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">type =</span> <span class="fu">factor</span>(wt <span class="sc">&lt;</span> <span class="dv">3</span>, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;sm&quot;</span>, <span class="st">&quot;lg&quot;</span>), <span class="at">ordered =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="fu">check_that</span>(<span class="fu">max</span>(wt[type <span class="sc">==</span> <span class="st">&quot;sm&quot;</span>]) <span class="sc">&lt;=</span> <span class="fu">min</span>(wt[type <span class="sc">==</span> <span class="st">&quot;lg&quot;</span>])) <span class="sc">|&gt;</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>  <span class="fu">filter</span>(type <span class="sc">==</span> <span class="st">&quot;sm&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">desired_mpg =</span> <span class="fu">mean</span>(mpg)) <span class="sc">|&gt;</span></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>  <span class="fu">check_that</span>(desired_mpg <span class="sc">&gt;</span> <span class="dv">15</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="co">#&gt; ── Data Checks ─────────────────────────────────────────────────────────────────</span></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="co">#&gt; ✖ max(wt[type == &quot;sm&quot;]) &lt;= min(wt[type == &quot;lg&quot;]) --&gt; FALSE</span></span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="co">#&gt; ────────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a><span class="co">#&gt; Error in `cli_throw_test_error()`:</span></span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="co">#&gt; ! At least one data check failed.</span></span></code></pre></div>
+<p>What happened? A quick reading of
+<code>factor(wt &lt; 3, labels = c(&quot;sm&quot;, &quot;lg&quot;), ordered = TRUE)</code>
+seems like it would correctly assign cars to the correct group. However,
+the labels are out of order in the function call.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> As a result, the heavy
+cars are mistakenly labelled <code>&quot;sm&quot;</code> and vice-versa.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
+<p>Importantly, this mistake (a) would have given us an erroneously low
+<code>desired_mpg</code> and (b) would have gone undetected by our final
+<code>check_that(desired_mpg &gt; 15)</code>. It was a call to
+<code>check_that()</code> earlier in the pipeline that caught the error
+and prevented us from drawing an bad conclusion about our data later
+on.</p>
+</div>
+<div id="helper-functions" class="section level2">
+<h2>Helper functions</h2>
+<p>Checkthat’s philosophy is your existing data checks by eye are
+probably already good. Their only major problem is that they live in
+your head and not in your code. So, checkthat provides a range of helper
+functions to work alongside base R’s existing collection (e.g.,
+<code>all()</code>, <code>any()</code>). These include both some basic
+and more special varieties.</p>
+<div id="basic-helpers" class="section level3">
+<h3>Basic helpers</h3>
+<p>The most basic helpers are just syntactic sugar around R’s existing
+comparison operators: <code>=</code>, <code>&lt;</code>,
+<code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code>. Each of them
+takes a logical vector as its first argument and requires you to specify
+a proportion (<code>p</code>) or count (<code>n</code>) of those values
+that must be true.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>mtcars <span class="sc">|&gt;</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="fu">check_that</span>(</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>    <span class="fu">at_least</span>(mpg <span class="sc">&lt;</span> <span class="dv">35</span>, <span class="at">p =</span> .<span class="dv">95</span>),</span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>    <span class="fu">more_than</span>(hp <span class="sc">==</span> <span class="dv">110</span>, <span class="at">n =</span> <span class="dv">2</span>),</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>    <span class="fu">exactly_equal</span>(cyl <span class="sc">==</span> <span class="dv">6</span>, <span class="at">n =</span> <span class="dv">7</span>),</span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>    <span class="fu">less_than</span>(wt <span class="sc">&gt;</span> <span class="dv">3</span>, <span class="at">p =</span> .<span class="dv">75</span>),</span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>    <span class="fu">at_most</span>(<span class="fu">is.na</span>(mpg), <span class="at">n =</span> <span class="dv">3</span>),</span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>  )</span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a><span class="co">#&gt; ✔ all data checks passing</span></span></code></pre></div>
+</div>
+<div id="special-helpers" class="section level3">
+<h3>Special helpers</h3>
+<p>The remaining helpers include <code>some_of()</code>,
+<code>whenever()</code>, and <code>for_case()</code> and are more
+flexible than their basic counterparts. They’re optimized for the kind
+of semi-approximate data checking you are likely already doing by
+eye.</p>
+<p>For most people, this involves a general sense of what most of the
+data should look like most of the time, but not exact knowledge of
+specific proportions or counts. For example, you might have good reason
+to think <code>some_of()</code> the <code>cyl</code> values should be
+greater than 4, but you don’t know exactly how many. However, you do
+know it should probably be <code>at_least</code> 30%, but
+<code>at_most</code> 25 total cases in your dataset. Anything outside
+that range would be implausible and so you want to guard it with
+<code>check_that()</code>.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>mtcars <span class="sc">|&gt;</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="fu">check_that</span>(</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>    <span class="fu">some_of</span>(cyl <span class="sc">&gt;</span> <span class="dv">4</span>, <span class="at">at_least =</span> .<span class="dv">30</span>, <span class="at">at_most =</span> <span class="dv">25</span>),</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>    <span class="fu">whenever</span>(<span class="at">is_observed =</span> wt <span class="sc">&lt;</span> <span class="dv">3</span>, <span class="at">then_expect =</span> mpg <span class="sc">&gt;</span> <span class="dv">19</span>),</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>    <span class="fu">for_case</span>(<span class="dv">2</span>, mpg <span class="sc">==</span> <span class="dv">21</span>, hp <span class="sc">==</span> <span class="dv">110</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>  )</span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="co">#&gt; ✔ all data checks passing</span></span></code></pre></div>
+<p>Just like unit tests for production code, the tests created with
+these special helper functions will be technically imperfect and leave
+some (possibly important) scenarios addressed. After all, there’s a big
+range of possibilities between <code>at_least = .30</code> and
+<code>at_most = 25</code>, and some of them might involve an undetected
+data problem.</p>
+<p>However, checkthat takes the position that imperfect tests are still
+valuable informative and you should be able to take advantage of them.
+For example, if you have reasons to be concerned about the data in your
+column crossing the <code>at_most = 25</code>, you should be able to
+quickly and easily write that test with a combination of
+<code>check_that()</code> and <code>some_of()</code>.</p>
+<p>Moreover, a world of <em>no tests at all</em> is much worse than a
+world of <em>some tests that fail to cover every case</em>. With that in
+mind, checkthat’s special helper functions are designed to bring you
+from <em>not writing down any tests in your code</em> to <em>quickly and
+easily coding the tests you already do by eye</em>.</p>
+</div>
+</div>
+<div id="checking-the-whole-dataframe" class="section level2">
+<h2>Checking the whole dataframe</h2>
+<p>In addition to concerns about the individual rows or columns in your
+data, you may also want to perform checks on the entire dataframe in
+question. For those cases, <code>check_that()</code> provides the
+<code>.d</code> pronoun, which works similarly to <code>.x</code> in the
+<strong>purrr</strong> package.</p>
+<p>In short, <code>.d</code> is a copy of the data you provided to
+<code>check_that()</code>, which you can use to write checks about the
+whole dataset.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>mtcars <span class="sc">|&gt;</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="fu">check_that</span>(</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>    <span class="fu">nrow</span>(.d) <span class="sc">&gt;</span> <span class="dv">10</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>    <span class="st">&quot;mpg&quot;</span> <span class="sc">%in%</span> <span class="fu">names</span>(.d)</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>  )</span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="co">#&gt; ✔ all data checks passing</span></span></code></pre></div>
+<p>This is especially useful for operations that could change the shape
+of your dataset (e.g., pivots, nests, joins). In the case of pivoting,
+you might want to check that the dataset have the correct anticipated
+dimensions.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>mtcars <span class="sc">|&gt;</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>  <span class="fu">check_that</span>(<span class="fu">ncol</span>(.d) <span class="sc">==</span> <span class="dv">11</span>, <span class="fu">nrow</span>(.d) <span class="sc">==</span> <span class="dv">32</span>) <span class="sc">|&gt;</span> <span class="co"># original dimensions</span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">everything</span>(),</span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">&quot;name&quot;</span>,</span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">&quot;values&quot;</span></span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a>  <span class="fu">check_that</span>(<span class="fu">ncol</span>(.d) <span class="sc">==</span> <span class="dv">2</span>, <span class="fu">nrow</span>(.d) <span class="sc">==</span> <span class="dv">32</span> <span class="sc">*</span> <span class="dv">11</span>) <span class="co"># check that cols became rows</span></span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a><span class="co">#&gt; ✔ all data checks passing</span></span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a><span class="co">#&gt; ✔ all data checks passing</span></span></code></pre></div>
+<p>After a join, you may want to check that there is a new column in the
+expected location, but also that there are no unanticipated new
+rows.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>cyl_ratings_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">cyl =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">8</span>), <span class="at">group =</span> <span class="fu">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>, <span class="st">&quot;C&quot;</span>))</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>mtcars <span class="sc">|&gt;</span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>  <span class="fu">left_join</span>(cyl_ratings_df, <span class="at">by =</span> <span class="st">&quot;cyl&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>  <span class="fu">check_that</span>(</span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a>    <span class="fu">ncol</span>(.d) <span class="sc">==</span> <span class="dv">12</span>, <span class="co"># check that there&#39;s one new column</span></span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a>    <span class="fu">names</span>(.d)[<span class="fu">length</span>(<span class="fu">names</span>(.d))] <span class="sc">==</span> <span class="st">&quot;group&quot;</span>, <span class="co"># check new column is &quot;group&quot;</span></span>
+<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a>    <span class="fu">nrow</span>(.d) <span class="sc">==</span> <span class="dv">32</span> <span class="co"># check that no new rows</span></span>
+<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a>  )</span>
+<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a><span class="co">#&gt; ✔ all data checks passing</span></span></code></pre></div>
+</div>
+<div class="footnotes footnotes-end-of-document">
+<hr />
+<ol>
+<li id="fn1"><p>The <code>factor()</code> function maps
+<code>wt &lt; 3 == FALSE --&gt; 1</code> and <code>TRUE --&gt; 2</code>
+in this case because <code>FALSE &lt; TRUE</code>. So, when
+<code>wt &lt; 3 == TRUE</code>,
+<code>factor(..., labels = c(&quot;sm&quot;, &quot;lg&quot;))</code> will assign the 2nd
+label (mistakenly, from our perspective).<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>Full disclosure, I made this mistake when preparing this
+example, and it was the <code>check_that()</code> function that pointed
+it out to me. So, I decided to include it.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
